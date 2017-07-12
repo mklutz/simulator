@@ -1,7 +1,6 @@
 package de.mklutz.simulator.gui;
 
 import java.awt.EventQueue;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -10,8 +9,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 
 import de.mklutz.simulator.model.Ball;
+import de.mklutz.simulator.prozessor.P1;
+import de.mklutz.simulator.prozessor.Prozessor;
 
 public class Simulator implements Runnable {
 
@@ -20,6 +22,8 @@ public class Simulator implements Runnable {
 	JSlider warteZeit;
 	private boolean laufModus = false;
 	long pause = 1;
+
+	Prozessor prozessor = P1.create();
 
 	/**
 	 * Launch the application.
@@ -50,7 +54,7 @@ public class Simulator implements Runnable {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 527, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
@@ -62,7 +66,7 @@ public class Simulator implements Runnable {
 				berechneUndZeige();
 			}
 		});
-		lauf.setBounds(309, 11, 89, 23);
+		lauf.setBounds(412, 45, 89, 23);
 		frame.getContentPane().add(lauf);
 
 		JButton schritt = new JButton("Schritt");
@@ -74,34 +78,37 @@ public class Simulator implements Runnable {
 			}
 		});
 
-		schritt.setBounds(210, 11, 89, 23);
+		schritt.setBounds(412, 11, 89, 23);
 		frame.getContentPane().add(schritt);
 
 		warteZeit = new JSlider();
-		warteZeit.setBounds(33, 11, 167, 26);
+		warteZeit.setOrientation(SwingConstants.VERTICAL);
+		warteZeit.setBounds(448, 121, 46, 87);
 		frame.getContentPane().add(warteZeit);
 
-		panel = new JPanel();
-		panel.setBounds(22, 56, 381, 176);
+		// panel = new JPanel();
+		panel = new ProzessorPanel(prozessor);
+		panel.setBounds(22, 11, 381, 239);
+		panel.setDoubleBuffered(true);
 		frame.getContentPane().add(panel);
 
 		JLabel lblSchnell = new JLabel("schnell");
-		lblSchnell.setBounds(10, 0, 46, 14);
+		lblSchnell.setBounds(455, 218, 46, 14);
 		frame.getContentPane().add(lblSchnell);
 
 		JLabel lblLangsam = new JLabel("langsam");
-		lblLangsam.setBounds(156, 0, 46, 14);
+		lblLangsam.setBounds(448, 100, 63, 14);
 		frame.getContentPane().add(lblLangsam);
 
 	}
 
 	void berechneUndZeige() {
 
-		Ball ball = Ball.newBall();
+		// ProzessorRenderer.render(panel, prozessor.schrittAusfuehren());
 
-		print(panel.getGraphics(), ball);
+		BallRenderer.render(panel, Ball.newBall());
 
-		if (laufModus) {
+		if ( laufModus ) {
 			try {
 				Thread.sleep(warteZeit.getValue() * 10);
 				EventQueue.invokeLater(this);
@@ -111,16 +118,8 @@ public class Simulator implements Runnable {
 		}
 	}
 
-	void print(Graphics gr, Ball ball) {
-		gr.drawOval(ball.getX(), ball.getY(), ball.getRadius(), ball.getRadius());
-	}
-
 	@Override
 	public void run() {
 		berechneUndZeige();
-
-		// if (laufModus) {
-		// EventQueue.invokeLater(this);
-		// }
 	}
 }
