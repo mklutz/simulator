@@ -13,4 +13,6 @@ public interface Prozessor {
 	void ladeProgramm(List<Long> befehle);
 
 	Prozessor schrittAusfuehren();
+
+	String getBefehlsZeiger();
 }

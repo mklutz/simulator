@@ -3,8 +3,15 @@ package de.mklutz.simulator.gui;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,6 +29,7 @@ public class Simulator implements Runnable {
 	JSlider warteZeit;
 	private boolean laufModus = false;
 	long pause = 1;
+	final JFileChooser fc = new JFileChooser();
 
 	Prozessor prozessor = P1.create();
 
@@ -83,7 +91,7 @@ public class Simulator implements Runnable {
 
 		warteZeit = new JSlider();
 		warteZeit.setOrientation(SwingConstants.VERTICAL);
-		warteZeit.setBounds(448, 121, 46, 87);
+		warteZeit.setBounds(422, 100, 46, 87);
 		frame.getContentPane().add(warteZeit);
 
 		prozessor.ladeProgramm(Programme.INCREMENT_AKKUMULATOR_IN_SCHLEIFE);
@@ -94,12 +102,42 @@ public class Simulator implements Runnable {
 		frame.getContentPane().add(panel);
 
 		JLabel lblSchnell = new JLabel("schnell");
-		lblSchnell.setBounds(455, 218, 46, 14);
+		lblSchnell.setBounds(429, 197, 46, 14);
 		frame.getContentPane().add(lblSchnell);
 
 		JLabel lblLangsam = new JLabel("langsam");
-		lblLangsam.setBounds(448, 100, 63, 14);
+		lblLangsam.setBounds(422, 79, 63, 14);
 		frame.getContentPane().add(lblLangsam);
+
+		JButton ladenButton = new JButton("Laden");
+		ladenButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				int returnVal = fc.showOpenDialog(frame);
+
+				if ( returnVal == JFileChooser.APPROVE_OPTION ) {
+					File file = fc.getSelectedFile();
+					if ( file.isFile() ) {
+						try {
+
+							List<Long> programm = new ArrayList<>();
+							Stream<String> lines = Files.lines(file.toPath());
+							lines.forEach(l -> programm.add(Long.parseLong(l)));
+							lines.close();
+
+							prozessor.ladeProgramm(programm);
+							berechneUndZeige();
+
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		});
+		ladenButton.setBounds(412, 222, 89, 23);
+		frame.getContentPane().add(ladenButton);
 
 	}
 

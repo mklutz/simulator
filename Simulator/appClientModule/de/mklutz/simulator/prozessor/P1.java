@@ -106,4 +106,9 @@ public class P1 implements Prozessor {
 		register.put(registerName, value);
 	}
 
+	@Override
+	public String getBefehlsZeiger() {
+		return "r" + getFrom(BEFEHLS_ZEIGER);
+	}
+
 }

@@ -1,5 +1,6 @@
 package de.mklutz.simulator.gui;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class ProzessorPanel extends JPanel {
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 
+		String befehlsZeiger = prozessor.getBefehlsZeiger();
 		List<String> register = prozessor.getRegister();
 
 		int x = 10, y = 10;
@@ -31,6 +33,11 @@ public class ProzessorPanel extends JPanel {
 
 			String registerName = register.get(i);
 			String registerWert = prozessor.getWert(registerName).toString();
+			if ( befehlsZeiger.equals(registerName) ) {
+				graphics.setColor(Color.RED);
+			} else {
+				graphics.setColor(Color.BLACK);
+			}
 			graphics.drawString(registerName, x, y);
 			graphics.drawString(registerWert, x + 100, y);
 			y = y + 10;
