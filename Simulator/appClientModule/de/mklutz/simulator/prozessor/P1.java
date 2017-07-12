@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class P1 implements Prozessor {
 
+	static String AKKUMULATOR = "akkumulator";
+	static String BEFEHLS_ZEIGER = "befehlsZeiger";
 	static int anzahlRegister = 20;
 	List<String> registerNamen = new ArrayList<>();
 	Map<String, Long> register = new HashMap<>();
@@ -18,8 +20,8 @@ public class P1 implements Prozessor {
 	public static Prozessor create() {
 
 		P1 p1 = new P1();
-		p1.registerNamen.add("akkumulator");
-		p1.registerNamen.add("befehlsZeiger");
+		p1.registerNamen.add(AKKUMULATOR);
+		p1.registerNamen.add(BEFEHLS_ZEIGER);
 
 		for (int i = 0; i < anzahlRegister; i++) {
 
@@ -64,7 +66,27 @@ public class P1 implements Prozessor {
 
 	@Override
 	public Prozessor schrittAusfuehren() {
-		register.put("akkumulator", register.get("akkumulator") + 1);
+
+		Long befehlsZeiger = getFrom(BEFEHLS_ZEIGER);
+		Long befehl = getFrom(befehlsZeiger);
+		setTo(BEFEHLS_ZEIGER, ++befehlsZeiger);
+
+		int anzahlParameter = Decoder.anzahlParameter(befehl);
+		Befehl maschienenBefehl = Befehl.noOp;
+
+		if ( anzahlParameter == 0 ) {
+
+			maschienenBefehl = Decoder.decode(befehl);
+		} else if ( anzahlParameter == 1 ) {
+
+			Long parameter = getFrom(befehlsZeiger);
+			setTo(BEFEHLS_ZEIGER, ++befehlsZeiger);
+
+			maschienenBefehl = Decoder.decode(befehl, parameter);
+		}
+
+		maschienenBefehl.doBefehl(this);
+
 		return this;
 	}
 
@@ -72,8 +94,16 @@ public class P1 implements Prozessor {
 		return register.get("r" + i);
 	}
 
+	private Long getFrom(String registerName) {
+		return register.get(registerName);
+	}
+
 	private void setTo(long i, Long value) {
 		register.put("r" + i, value);
+	}
+
+	private void setTo(String registerName, Long value) {
+		register.put(registerName, value);
 	}
 
 }

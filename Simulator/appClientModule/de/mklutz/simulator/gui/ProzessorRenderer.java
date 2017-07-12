@@ -7,6 +7,11 @@ import javax.swing.JPanel;
 
 import de.mklutz.simulator.prozessor.Prozessor;
 
+/**
+ *
+ * @deprecated benutze ProzessoePanel
+ */
+@Deprecated
 public class ProzessorRenderer {
 
 	public static void render(JPanel panel, Prozessor prozessor) {

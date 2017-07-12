@@ -20,8 +20,8 @@ public class ProzessorPanel extends JPanel {
 	}
 
 	@Override
-	protected void printComponent(Graphics graphics) {
-		super.printComponent(graphics);
+	protected void paintComponent(Graphics graphics) {
+		super.paintComponent(graphics);
 
 		List<String> register = prozessor.getRegister();
 

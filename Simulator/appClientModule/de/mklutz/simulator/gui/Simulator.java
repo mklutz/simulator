@@ -11,8 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 
-import de.mklutz.simulator.model.Ball;
 import de.mklutz.simulator.prozessor.P1;
+import de.mklutz.simulator.prozessor.Programme;
 import de.mklutz.simulator.prozessor.Prozessor;
 
 public class Simulator implements Runnable {
@@ -62,7 +62,7 @@ public class Simulator implements Runnable {
 		lauf.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				laufModus = true;
+				laufModus = !laufModus;
 				berechneUndZeige();
 			}
 		});
@@ -86,6 +86,7 @@ public class Simulator implements Runnable {
 		warteZeit.setBounds(448, 121, 46, 87);
 		frame.getContentPane().add(warteZeit);
 
+		prozessor.ladeProgramm(Programme.INCREMENT_AKKUMULATOR_IN_SCHLEIFE);
 		// panel = new JPanel();
 		panel = new ProzessorPanel(prozessor);
 		panel.setBounds(22, 11, 381, 239);
@@ -104,9 +105,8 @@ public class Simulator implements Runnable {
 
 	void berechneUndZeige() {
 
-		// ProzessorRenderer.render(panel, prozessor.schrittAusfuehren());
-
-		BallRenderer.render(panel, Ball.newBall());
+		prozessor.schrittAusfuehren();
+		panel.repaint();
 
 		if ( laufModus ) {
 			try {
