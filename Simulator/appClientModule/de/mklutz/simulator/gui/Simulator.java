@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -143,6 +144,8 @@ public class Simulator implements Runnable {
 		frame.getContentPane().add(textArea);
 
 		JButton btnProgramm = new JButton("<-");
+		btnProgramm.setIcon(
+				new ImageIcon(Simulator.class.getResource("/javax/swing/plaf/metal/icons/ocean/iconify-pressed.gif")));
 		btnProgramm.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -163,7 +166,8 @@ public class Simulator implements Runnable {
 	void ladeProzessor(List<String> programmText) {
 		List<Long> programm = new ArrayList<>();
 		// entferne kommentar/leerzeichen und fuelle programm
-		programmText.stream().map(l -> entferneKommentar(l)).forEach(l -> programm.add(Long.parseLong(l)));
+		programmText.stream().map(l -> entferneKommentar(l)).filter(s -> s.length() > 0)
+				.forEach(l -> programm.add(Long.parseLong(l)));
 		prozessor.ladeProgramm(programm);
 		panel.repaint();
 	}
