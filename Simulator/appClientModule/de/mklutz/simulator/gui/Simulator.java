@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.swing.JButton;
@@ -16,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import de.mklutz.simulator.prozessor.P1;
@@ -30,6 +33,7 @@ public class Simulator implements Runnable {
 	private boolean laufModus = false;
 	long pause = 1;
 	final JFileChooser fc = new JFileChooser();
+	JTextArea textArea;
 
 	Prozessor prozessor = P1.create();
 
@@ -90,19 +94,20 @@ public class Simulator implements Runnable {
 		frame.getContentPane().add(schritt);
 
 		warteZeit = new JSlider();
+		warteZeit.setMaximum(10);
 		warteZeit.setOrientation(SwingConstants.VERTICAL);
-		warteZeit.setBounds(422, 100, 46, 87);
+		warteZeit.setBounds(422, 100, 46, 91);
 		frame.getContentPane().add(warteZeit);
 
 		prozessor.ladeProgramm(Programme.INCREMENT_AKKUMULATOR_IN_SCHLEIFE);
 		// panel = new JPanel();
 		panel = new ProzessorPanel(prozessor);
-		panel.setBounds(22, 11, 381, 239);
+		panel.setBounds(22, 11, 172, 239);
 		panel.setDoubleBuffered(true);
 		frame.getContentPane().add(panel);
 
 		JLabel lblSchnell = new JLabel("schnell");
-		lblSchnell.setBounds(429, 197, 46, 14);
+		lblSchnell.setBounds(422, 202, 46, 14);
 		frame.getContentPane().add(lblSchnell);
 
 		JLabel lblLangsam = new JLabel("langsam");
@@ -116,29 +121,56 @@ public class Simulator implements Runnable {
 				int returnVal = fc.showOpenDialog(frame);
 
 				if ( returnVal == JFileChooser.APPROVE_OPTION ) {
+					// lade Datei in textArea
 					File file = fc.getSelectedFile();
 					if ( file.isFile() ) {
-						try {
+						try (Stream<String> lines = Files.lines(file.toPath())) {
 
-							List<Long> programm = new ArrayList<>();
-							Stream<String> lines = Files.lines(file.toPath());
-							lines.forEach(l -> programm.add(Long.parseLong(l)));
-							lines.close();
-
-							prozessor.ladeProgramm(programm);
-							berechneUndZeige();
+							textArea.setText(lines.collect(Collectors.joining("\n")));
 
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 				}
 			}
 		});
-		ladenButton.setBounds(412, 222, 89, 23);
+		ladenButton.setBounds(412, 227, 89, 23);
 		frame.getContentPane().add(ladenButton);
 
+		textArea = new JTextArea();
+		textArea.setBounds(238, 10, 157, 240);
+		frame.getContentPane().add(textArea);
+
+		JButton btnProgramm = new JButton("<-");
+		btnProgramm.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// lade Text aus testArea in Prozessor
+				ladeProzessor(textArea.getText());
+			}
+		});
+		btnProgramm.setBounds(199, 114, 29, 23);
+		frame.getContentPane().add(btnProgramm);
+
+	}
+
+	void ladeProzessor(String programmText) {
+
+		ladeProzessor(Arrays.asList(programmText.split("\n")));
+	}
+
+	void ladeProzessor(List<String> programmText) {
+		List<Long> programm = new ArrayList<>();
+		// entferne kommentar/leerzeichen und fuelle programm
+		programmText.stream().map(l -> entferneKommentar(l)).forEach(l -> programm.add(Long.parseLong(l)));
+		prozessor.ladeProgramm(programm);
+		panel.repaint();
+	}
+
+	static String entferneKommentar(String zeile) {
+		String[] split = zeile.split("#");
+		return split[0].trim();
 	}
 
 	void berechneUndZeige() {

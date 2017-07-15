@@ -62,6 +62,7 @@ public class P1 implements Prozessor {
 
 			setTo(i, befehle.get(i));
 		}
+		setTo(BEFEHLS_ZEIGER, 0L);
 	}
 
 	@Override
