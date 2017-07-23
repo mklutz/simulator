@@ -9,6 +9,9 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,6 +31,7 @@ import de.mklutz.simulator.prozessor.Prozessor;
 
 public class Simulator implements Runnable {
 
+	ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
 	private JFrame frame;
 	JPanel panel;
 	JSlider warteZeit;
@@ -115,7 +119,7 @@ public class Simulator implements Runnable {
 		lblLangsam.setBounds(422, 79, 63, 14);
 		frame.getContentPane().add(lblLangsam);
 
-		JButton ladenButton = new JButton("Laden");
+		JButton ladenButton = new JButton("Datei");
 		ladenButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -183,14 +187,19 @@ public class Simulator implements Runnable {
 		panel.repaint();
 
 		if ( laufModus ) {
-			try {
-				Thread.sleep(warteZeit.getValue() * 10);
-				EventQueue.invokeLater(this);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			executor.schedule(invokeLaterInThread, warteZeit.getValue() * 100, TimeUnit.MILLISECONDS);
 		}
 	}
+
+	Callable<Boolean> invokeLaterInThread = new Callable<Boolean>() {
+
+		@Override
+		public Boolean call() throws Exception {
+			EventQueue.invokeLater(Simulator.this);
+			return true;
+		}
+
+	};
 
 	@Override
 	public void run() {
