@@ -1,0 +1,17 @@
+3 # setze Akkumulator
+10
+4 # addiere
+5
+5 # addiere inhalt von register 10
+10 
+0 # tue nichts
+2 # goTo
+0 # 0
+0 # tue nichts
+50 # register 10
+0 # tue nichts
+0 # tue nichts
+0 # tue nichts
+0 # tue nichts
+0 # tue nichts
+0 # tue nichts
