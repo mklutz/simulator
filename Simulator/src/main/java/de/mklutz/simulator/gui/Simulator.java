@@ -28,8 +28,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import de.mklutz.simulator.prozessor.P1;
-import de.mklutz.simulator.prozessor.Programme;
 import de.mklutz.simulator.prozessor.Prozessor;
+import de.mklutz.simulator.prozessor.util.Programme;
 
 public class Simulator implements Runnable {
 

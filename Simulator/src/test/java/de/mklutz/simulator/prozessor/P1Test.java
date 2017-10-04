@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import de.mklutz.simulator.prozessor.util.Programme;
+
 public class P1Test {
 
 	@Test
