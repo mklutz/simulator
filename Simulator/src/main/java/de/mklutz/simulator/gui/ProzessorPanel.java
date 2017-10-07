@@ -10,6 +10,7 @@ import de.mklutz.simulator.prozessor.Prozessor;
 
 public class ProzessorPanel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
 	Prozessor prozessor;
 
 	ProzessorPanel(Prozessor prozessor) {

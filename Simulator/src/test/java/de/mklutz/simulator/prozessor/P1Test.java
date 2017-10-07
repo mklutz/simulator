@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -75,6 +76,26 @@ public class P1Test {
 		prozessor.schrittAusfuehren();
 		prozessor.schrittAusfuehren();
 		assertEquals(2L, prozessor.getWert(P1.AKKUMULATOR).longValue());
+	}
+
+	@Test
+	public void neueBefehle() {
+
+		List<Long> programm = Arrays.asList( 1L, 2L, 5L, 0L, 0L, 2L, 1L );
+		Prozessor prozessor = P1.create();
+
+		prozessor.ladeProgramm( programm );
+
+		prozessor.schrittAusfuehren();
+
+		prozessor.schrittAusfuehren();
+
+		prozessor.schrittAusfuehren();
+
+		prozessor.schrittAusfuehren();
+
+		prozessor.schrittAusfuehren();
+
 	}
 
 }

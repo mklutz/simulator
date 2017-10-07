@@ -73,20 +73,20 @@ public class P1 implements Prozessor {
 		setTo(BEFEHLS_ZEIGER, ++befehlsZeiger);
 
 		int anzahlParameter = Decoder.anzahlParameter(befehl);
-		Befehl maschienenBefehl = Befehl.noOp;
+		Befehl maschinenBefehl = Befehl.noOp;
 
 		if ( anzahlParameter == 0 ) {
 
-			maschienenBefehl = Decoder.decode(befehl);
+			maschinenBefehl = Decoder.decode(befehl);
 		} else if ( anzahlParameter == 1 ) {
 
 			Long parameter = getFrom(befehlsZeiger);
 			setTo(BEFEHLS_ZEIGER, ++befehlsZeiger);
 
-			maschienenBefehl = Decoder.decode(befehl, parameter);
+			maschinenBefehl = Decoder.decode(befehl, parameter);
 		}
 
-		maschienenBefehl.doBefehl(this);
+		maschinenBefehl.doBefehl(this);
 
 		return this;
 	}
