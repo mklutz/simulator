@@ -1,4 +1,4 @@
-package de.mklutz.simulator.prozessor;
+package de.lclutz.simulator.prozessor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,22 +6,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class P1 implements Prozessor {
+public class PIC16F84A implements Prozessor {
 
-	static String AKKUMULATOR = "akkumulator";
-	static String BEFEHLS_ZEIGER = "befehlsZeiger";
+	static String W = "w";
+	static String PC = "befehlsZeiger";
 	static int anzahlRegister = 20;
 	List<String> registerNamen = new ArrayList<>();
 	Map<String, Long> register = new HashMap<>();
 
-	P1() {
+	PIC16F84A() {
 	};
 
 	public static Prozessor create() {
 
-		P1 p1 = new P1();
-		p1.registerNamen.add(AKKUMULATOR);
-		p1.registerNamen.add(BEFEHLS_ZEIGER);
+		PIC16F84A p1 = new PIC16F84A();
+		p1.registerNamen.add(W);
+		p1.registerNamen.add(PC);
 
 		for (int i = 0; i < anzahlRegister; i++) {
 
@@ -62,29 +62,17 @@ public class P1 implements Prozessor {
 
 			setTo(i, befehle.get(i));
 		}
-		setTo(BEFEHLS_ZEIGER, 0L);
+		setTo(PC, 0L);
 	}
 
 	@Override
 	public Prozessor schrittAusfuehren() {
 
-		Long befehlsZeiger = getFrom(BEFEHLS_ZEIGER);
+		Long befehlsZeiger = getFrom(PC);
 		Long befehl = getFrom(befehlsZeiger);
-		setTo(BEFEHLS_ZEIGER, ++befehlsZeiger);
+		setTo(PC, ++befehlsZeiger);
 
-		int anzahlParameter = Decoder.anzahlParameter(befehl);
-		Befehl maschinenBefehl = Befehl.noOp;
-
-		if ( anzahlParameter == 0 ) {
-
-			maschinenBefehl = Decoder.decode(befehl);
-		} else if ( anzahlParameter == 1 ) {
-
-			Long parameter = getFrom(befehlsZeiger);
-			setTo(BEFEHLS_ZEIGER, ++befehlsZeiger);
-
-			maschinenBefehl = Decoder.decode(befehl, parameter);
-		}
+		Befehl maschinenBefehl = Decoder.decode(befehl);
 
 		maschinenBefehl.doBefehl(this);
 
@@ -109,7 +97,7 @@ public class P1 implements Prozessor {
 
 	@Override
 	public String getBefehlsZeiger() {
-		return "r" + getFrom(BEFEHLS_ZEIGER);
+		return "r" + getFrom(PC);
 	}
 
 }

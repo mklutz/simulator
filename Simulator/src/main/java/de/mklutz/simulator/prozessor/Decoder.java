@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Decoder {
 
-	static Map<Long, Befehl> codeDecode = new HashMap<>();
+	static final Map<Long, Befehl> codeDecode = new HashMap<>();
 
 	static {
 
