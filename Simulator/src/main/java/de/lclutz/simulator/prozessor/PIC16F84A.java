@@ -1,103 +1,48 @@
 package de.lclutz.simulator.prozessor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Stack;
 
-public class PIC16F84A implements Prozessor {
+public class PIC16F84A {
 
-	static String W = "w";
-	static String PC = "befehlsZeiger";
-	static int anzahlRegister = 20;
-	List<String> registerNamen = new ArrayList<>();
-	Map<String, Long> register = new HashMap<>();
+	Integer w = 0;
+	Integer pc = 0;
+	Stack<Integer> stack = new Stack<>();
+	ProgrammSpeicher programmSpeicher = new ProgrammSpeicher();
+	DatenSpeicher datenSpeicher = new DatenSpeicher();
 
 	PIC16F84A() {
+
+		initWerte();
 	};
 
-	public static Prozessor create() {
+	public static PIC16F84A create() {
 
-		PIC16F84A p1 = new PIC16F84A();
-		p1.registerNamen.add(W);
-		p1.registerNamen.add(PC);
-
-		for (int i = 0; i < anzahlRegister; i++) {
-
-			p1.registerNamen.add("r" + i);
-		}
-
-		p1.initWerte();
-
-		return p1;
+		return new PIC16F84A();
 	}
 
 	private void initWerte() {
-		registerNamen.forEach(n -> register.put(n, 0L));
+
 	}
 
-	@Override
-	public List<String> getRegister() {
-		return Collections.unmodifiableList(registerNamen);
-	}
-
-	@Override
-	public Long getWert(String registerName) {
-		return register.get(registerName);
-	}
-
-	// @Override
-	public void setRegister(String nane, Long wert) {
-		register.put(nane, wert);
-	}
-
-	@Override
 	public void ladeProgramm(List<Long> befehle) {
-
-		if ( befehle.size() > anzahlRegister )
-			throw new IllegalArgumentException();
 
 		for (int i = 0; i < befehle.size(); i++) {
 
-			setTo(i, befehle.get(i));
+			programmSpeicher.set( i, befehle.get( i ) );
 		}
-		setTo(PC, 0L);
+		pc = 0;
 	}
 
-	@Override
-	public Prozessor schrittAusfuehren() {
+	public PIC16F84A schritt() {
 
-		Long befehlsZeiger = getFrom(PC);
-		Long befehl = getFrom(befehlsZeiger);
-		setTo(PC, ++befehlsZeiger);
+		Long befehl = programmSpeicher.get( pc++ );
 
-		Befehl maschinenBefehl = Decoder.decode(befehl);
+		Befehl maschinenBefehl = Befehl.getOperation( befehl );
 
 		maschinenBefehl.doBefehl(this);
 
 		return this;
-	}
-
-	private Long getFrom(long i) {
-		return register.get("r" + i);
-	}
-
-	private Long getFrom(String registerName) {
-		return register.get(registerName);
-	}
-
-	private void setTo(long i, Long value) {
-		register.put("r" + i, value);
-	}
-
-	private void setTo(String registerName, Long value) {
-		register.put(registerName, value);
-	}
-
-	@Override
-	public String getBefehlsZeiger() {
-		return "r" + getFrom(PC);
 	}
 
 }

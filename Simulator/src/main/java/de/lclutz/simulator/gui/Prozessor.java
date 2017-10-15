@@ -1,4 +1,4 @@
-package de.lclutz.simulator.prozessor;
+package de.lclutz.simulator.gui;
 
 import java.util.List;
 
